@@ -33,4 +33,13 @@
 
 # temp file
 *~
-*#*#
+#*#
+
+# sonar
+bw-output/
+sonarCloud.sh
+.scannerwork/
+
+# cmake
+build/
+CMakeFiles/
