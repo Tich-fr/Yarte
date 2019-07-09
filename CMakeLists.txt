@@ -15,9 +15,12 @@ set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build")
 # --------------------------------------------------------------------------
 # Source files
 # --------------------------------------------------------------------------
-set(SOURCES
-    "${SRC_DIR}/main.cpp"
-    )
+#set(SOURCES
+#"${SRC_DIR}/main.cpp"
+#"${SRC_DIR}/environment.cpp"
+#"${SRC_DIR}/color.cpp"
+#)
+file(GLOB SOURCES "${SRC_DIR}/*.cpp")
 
 # --------------------------------------------------------------------------
 # Executable def and properties
@@ -36,3 +39,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 # --------------------------------------------------------------------------
 # ==== GLM ==== #
 target_include_directories(${PROJECT_NAME} PRIVATE "${INC_DIR}/glm")
+# ==== X11 ==== #
+find_package(X11 REQUIRED)
+include_directories(${X11_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${X11_LIBRARIES})

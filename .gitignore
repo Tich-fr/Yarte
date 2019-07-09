@@ -33,7 +33,7 @@
 
 # temp file
 *~
-#*#
+\#*#
 
 # sonar
 bw-output/
