@@ -12,7 +12,7 @@ class Object {
     virtual double intersection(const Matrix& e, const Matrix& d) const = 0 ;
     virtual Matrix normal(const Matrix& intersection) const = 0 ;
 
- protected:
+    // TODO encapsulate all of that as protected and do getters/setters
     Matrix M, Minv ;
     Color specular, diffuse, ambiant ;
     double specular_coeff, diffuse_coeff, ambiant_coeff ;

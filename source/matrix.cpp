@@ -126,15 +126,25 @@ void Matrix::transpose() {
 
 void Matrix::homogenize(const double n) {
     Matrix res = this->homogenized(n);
+
     delete[] mat;
-    mat = new double[res.line * res.col];
+
+    line = res.line ;
+    col = res.col ;
+    mat = new double[line * col];
+
     std::copy(res.mat, res.mat + (line * col), this->mat);
 }
 
 void Matrix::unhomogenize() {
     Matrix res = this->unhomogenized();
+
     delete[] mat;
-    mat = new double[res.line * res.col];
+
+    line = res.line ;
+    col = res.col ;
+    mat = new double[line * col];
+
     std::copy(res.mat, res.mat + (line * col), this->mat);
 }
 

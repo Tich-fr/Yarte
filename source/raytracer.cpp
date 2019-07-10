@@ -3,11 +3,19 @@
 // dev includes
 #include <time.h>
 #include <stdlib.h>
+#include <iostream>
+
+#include <float.h> // DBL_MAX
 
 //TODO : make values for light and background configurable
 Raytracer::Raytracer(Environment* env) :
     env(env), light(new Light(Matrix(4,1), Color(80, 80, 10), Color(1, 1, 1))),
-    cam(nullptr), background(250, 250, 250) {
+    cam(new Camera()), background(125, 125, 125), Near(1.0), Far(25.0), Theta(45.0) {
+
+    light->pos(0,0) = 6.0 ;
+    light->pos(1,0) = 6.0 ;
+    light->pos(2,0) = 1.0 ;
+    light->pos(3,0) = 1.0 ;
 
     env->init() ;
 }
@@ -23,13 +31,7 @@ Raytracer::~Raytracer() {
 void Raytracer::show() {
 
     render() ;
-
     env->show() ;
-}
-
-//TODO : make it more configurable
-void Raytracer::set_camera(double x, double y, double z) {
-
 }
 
 unsigned int Raytracer::add_object( Object *obj ) {
@@ -42,23 +44,44 @@ unsigned int Raytracer::add_object( Object *obj ) {
 void Raytracer::render() {
 
     srand(time(NULL)) ;
+
+    Color c ;
+
     for (int i = 0; i < env->get_width() ; i++) {
         for (int j = 0; j < env->get_height() ; j++) {
-            env->setPixel(i, j, rand()%255, rand()%255, rand()%255) ;
+            c = shade(i, j) ;
+            env->setPixel(i, j, c.r, c.g, c.b) ;
         }
     }
 }
 
-//TODO
-int Raytracer::find_min_hit_time() {
+int Raytracer::find_min_hit_time(double intersect[], int size) {
 
-    return 0 ;
+    double min_t = DBL_MAX ;
+    int ind = -1 ;
+
+    for (int i=0 ; i<size ; i++) {
+        if (intersect[i] != -1.0 && intersect[i] < min_t) {
+            min_t = intersect[i] ;
+            ind = i ;
+        }
+    }
+
+    return ind ;
 }
 
-//TODO
 Matrix Raytracer::ray_direction(int i, int j) {
 
-    return Matrix(4,1) ;
+    Matrix d(3,1) ;
+    double height = env->get_height() ;
+    double width = env->get_width() ;
+    double aspect = env->get_ratio() ;
+
+    for (int k = 0; k < 3; k++)
+        d(k,0) = -1.0*Near*cam->n(k,0) + width*(2.0*i/width - 1.0)*cam->u(k,0)
+            + height*(2.0*j/height - 1.0)*cam->v(k,0) ;
+
+    return d.homogenized(0.0) ;
 }
 
 //TODO
@@ -67,8 +90,24 @@ bool Raytracer::shadowed(const Matrix& e, const Matrix& d) {
     return false ;
 }
 
-//TODO
-Color Raytracer::shade(int obj, const Matrix& e, const Matrix& d, int rec_level) {
+//TODO : make recursive after simple lighting done
+Color Raytracer::shade(int i, int j) {
 
-    return Color(125, 125, 125) ;
+    Matrix e = cam->pos ;
+    Matrix d = ray_direction(i, j) ;
+
+    // find all intersections
+    const int nobj = objects.size() ;
+    double intersect[nobj] ;
+    for (int i=0 ; i<nobj ; i++) {
+        intersect[i] = objects[i]->intersection(objects[i]->Minv * e, objects[i]->Minv * d) ;
+    }
+
+    // get closest intersection points
+    int ind = find_min_hit_time(intersect, nobj) ;
+    if (ind == -1) // no intersection
+        return background ;
+
+    // for now just return the color of the closest object
+    return objects[ind]->specular ;
 }

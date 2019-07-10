@@ -12,27 +12,31 @@
 #define UPy              0.0
 #define UPz              1.0
 
-Camera::Camera() : up(4,1), pos(4,1), gaze(4,1), u(4,1), v(4,1), n(4,1) {
+Camera::Camera() : up(3,1), pos(3,1), gaze(3,1), u(3,1), v(3,1), n(3,1) {
 
     // TODO : do not use fixed values
     pos(0,0) = Ex ;
     pos(1,0) = Ey ;
     pos(2,0) = Ez ;
-    pos(3,0) = 1.0 ;
 
     gaze(0,0) = Gx ;
     gaze(1,0) = Gy ;
     gaze(2,0) = Gz ;
-    gaze(3,0) = 1.0 ;
 
     up(0,0) = UPx ;
     up(1,0) = UPy ;
     up(2,0) = UPz ;
-    up(3,0) = 1.0 ;
 
     n = (pos - gaze).normalized() ;
     u = up.cross(n).normalized() ;
     v = n.cross(u).normalized() ;
+
+    up.homogenize() ;
+    pos.homogenize() ;
+    gaze.homogenize() ;
+    u.homogenize() ;
+    v.homogenize() ;
+    n.homogenize() ;
 }
 
 Camera::~Camera() {}

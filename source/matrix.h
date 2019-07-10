@@ -67,8 +67,8 @@ class Matrix {
         Matrix operator* (const Matrix& b) const;
 
         // accessor
-        double operator() (int l, int c) const;
-        double& operator() (int l, int c);
+        double operator() (int l, int c) const; //read
+        double& operator() (int l, int c); //right
 
         // technicals operations
         Matrix& operator= (const Matrix& m);
