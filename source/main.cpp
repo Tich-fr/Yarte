@@ -11,15 +11,15 @@ int main(int argc, char* argv[]) {
 
     Object* o1 = new IPlane(Color(200, 10, 10), 0.8,
                             Color(190, 20, 20), 0.4,
-                            Color(180, 30, 30), 0.2,
+                            Color(100, 30, 30), 0.2,
                             0.35, 1.0) ;
     Object* o2 = new Sphere(Color(20, 200, 20), 0.8,
                             Color(30, 190, 30), 0.4,
-                            Color(40, 180, 40), 0.2,
+                            Color(40, 100, 40), 0.2,
                             0.35, 1.0) ;
     Object* o3 = new Cone(Color(20, 200, 200), 0.8,
                             Color(30, 190, 190), 0.4,
-                            Color(40, 180, 180), 0.2,
+                            Color(40, 100, 100), 0.2,
                             0.35, 1.0) ;
 
     o2->translate(2, 2, 2) ;

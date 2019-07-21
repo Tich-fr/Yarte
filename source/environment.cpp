@@ -46,7 +46,7 @@ void XEnvironment::show() {
 
 void XEnvironment::setPixel(uint i, uint j, uint r, uint g, uint b) {
     XSetForeground(display, gc, r << 16 | g << 8 | b) ;
-    XDrawPoint(display, window, gc, i, j) ;
+    XDrawPoint(display, window, gc, i, get_height() - j - 1) ;
 }
 
 void XEnvironment::clear() {

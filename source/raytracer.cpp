@@ -1,7 +1,5 @@
 #include "raytracer.h"
-
-// dev includes
-#include <iostream>
+#include "utils.h"
 
 #include <float.h> // DBL_MAX
 #include <cmath>
@@ -43,7 +41,6 @@ unsigned int Raytracer::add_object( Object *obj ) {
     return objects.size() - 1 ;
 }
 
-//TODO
 void Raytracer::render() {
 
     Color c ;
@@ -51,9 +48,9 @@ void Raytracer::render() {
     int w = env->get_width() ;
 
     for (int i = 0; i < w ; i++) {
-        for (int j = 0, jp = h-1 ; j < h ; j++, jp--) {
+        for (int j = 0 ; j < h ; j++) {
             c = shade(i, j) ;
-            env->setPixel(i, jp, c.r, c.g, c.b) ;
+            env->setPixel(i, j, c.r, c.g, c.b) ;
         }
     }
 }
@@ -85,30 +82,47 @@ Matrix Raytracer::ray_direction(int i, int j) {
     return d ;
 }
 
-//TODO
 bool Raytracer::shadowed(const Matrix& e, const Matrix& d) {
 
+    const int nobj = objects.size() ;
+    for (int i=0 ; i<nobj ; i++)
+        if (objects[i]->intersection(e, d) < 0)
+            return true ;
+    
     return false ;
 }
 
-//TODO : make recursive after simple lighting done
 Color Raytracer::shade(int i, int j) {
 
     Matrix e = cam->pos ;
     Matrix d = ray_direction(i, j) ;
 
-    // find all intersections
+    // find closest intersections
+    double intersection = DBL_MAX ;
+    double tmp ;
+    int ind ;
     const int nobj = objects.size() ;
-    double intersect[nobj] ;
     for (int k=0 ; k<nobj ; k++) {
-        intersect[k] = objects[k]->intersection(e, d) ;
+        tmp = objects[k]->intersection(e, d) ;
+        if (tmp >= 0.0 && tmp < intersection) {
+            intersection = tmp ;
+            ind = k ;
+        }
     }
 
-    // get closest intersection points
-    int ind = find_min_hit_time(intersect, nobj) ;
-    if (ind == -1) // no intersection
+    // no intersection ?
+    if (intersection == DBL_MAX)
         return background ;
 
+    // shadowed or not ?
+    // TODO : does not work, everything is in shadow
+    Matrix pos_intersection = coordinate_on_segment(e, d, intersection) ;
+    if (shadowed(pos_intersection, vector_a_to_b(pos_intersection, light->pos)))
+        return objects[ind]->ambiant ;
+    
     // for now just return the color of the closest object
     return objects[ind]->specular ;
+
+    //TODO opacity
+    //TODO reflectivity
 }
