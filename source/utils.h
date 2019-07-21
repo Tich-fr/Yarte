@@ -5,11 +5,11 @@
 
 #define EPSILON 0.001
 
-Matrix rotate(double x, double y, double z, double angle) ;
+Matrix rotated(double x, double y, double z, double angle) ;
 
-Matrix translate(double x, double y, double z) ;
+Matrix translated(double x, double y, double z) ;
 
-Matrix scale(double x, double y, double z) ;
+Matrix scaled(double x, double y, double z) ;
 
 /*
  * return the min positive solution of a quadratic, -1 if no solution

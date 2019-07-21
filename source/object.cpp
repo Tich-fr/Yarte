@@ -1,5 +1,5 @@
 #include "object.h"
-#include "utils.h" // define macro EPSILON, include <cmath>
+#include "utils.h" // define EPSILON, <cmath>, ..
 
 Object::Object(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) :
     M(Matrix::Id()), Minv(Matrix::Id()), specular(spec), diffuse(diff), ambiant(amb),
@@ -9,17 +9,44 @@ Object::Object(const Color& spec, double spec_c, const Color& diff, double diff_
 
 Object::~Object() {}
 
+Object& Object::rotate(double x, double y, double z, double angle) {
+
+    M = rotated(x,y,z,angle) * M ;
+    Minv = M.inversed() ;
+
+    return *this ;
+}
+
+Object& Object::translate(double x, double y, double z) {
+
+    M = translated(x,y,z) * M ;
+    Minv = M.inversed() ;
+
+    return *this ;
+}
+
+Object& Object::scale(double x, double y, double z) {
+
+    M = scaled(x,y,z) * M ;
+    Minv = M.inversed() ;
+
+    return *this ;
+}
+
 // Infinite plane
 
 IPlane::IPlane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
     : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
 
-double IPlane::intersection(const Matrix &e, const Matrix &d) const {
+double IPlane::intersection(const Matrix &pos, const Matrix &dir) const {
+
+    Matrix e = Minv * pos ;
+    Matrix d = Minv * dir ;
 
     if (fabs(d(2,0)) < EPSILON) // too small
         return -1.0 ;
 
-    double t = -e(2,0) / d(2,0) ;
+    double t = -1.0 * e(2,0) / d(2,0) ;
     return t<=0.0 ? -1.0 : t ;
 }
 
@@ -40,7 +67,10 @@ Matrix IPlane::normal(const Matrix& intersection) const {
 Plane::Plane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
     : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
 
-double Plane::intersection(const Matrix &e, const Matrix &d) const {
+double Plane::intersection(const Matrix &pos, const Matrix &dir) const {
+
+    Matrix e = Minv * pos ;
+    Matrix d = Minv * dir ;
 
     if (fabs(d(2,0)) < EPSILON)
         return -1.0 ;
@@ -70,14 +100,14 @@ Matrix Plane::normal(const Matrix& intersection) const {
 Sphere::Sphere(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
     : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
 
-double Sphere::intersection(const Matrix& e, const Matrix& d) const {
+double Sphere::intersection(const Matrix& pos, const Matrix& dir) const {
 
-    Matrix dd = d.unhomogenized() ;
-    Matrix ee = e.unhomogenized() ;
+    Matrix e = (Minv * pos).unhomogenized() ;
+    Matrix d = (Minv * dir).unhomogenized() ;
 
-    double a = dd.dot(ee) ;
-    double b = ee.dot(dd) ;
-    double c = ee.dot(ee) - 1.0 ;
+    double a = d.dot(d) ;
+    double b = e.dot(d) ;
+    double c = e.dot(e) - 1.0 ;
 
     return solve_quadratic_min(a, b, c) ;
 }
@@ -99,7 +129,10 @@ Matrix Sphere::normal(const Matrix& intersection) const {
 Cone::Cone(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
     : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
 
-double Cone::intersection( const Matrix &e, const Matrix &d ) const {
+double Cone::intersection( const Matrix &pos, const Matrix &dir ) const {
+
+    Matrix e = Minv * pos ;
+    Matrix d = Minv * dir ;
 
     double a = d(0,0)*d(0,0) + d(1,0)*d(1,0) - d(2,0)*d(2,0) ;
     double b = d(0,0)*e(0,0) + d(1,0)*e(1,0) + d(2,0)*(1-e(2,0)) ;
@@ -122,5 +155,3 @@ Matrix Cone::normal( const Matrix &intersection ) const {
 
     return normal.normalized() ;
 }
-    
-

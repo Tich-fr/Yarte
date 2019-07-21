@@ -24,7 +24,7 @@ class Environment {
         return height ;
     }
     float get_ratio() const {
-        return width / height ;
+        return (float)width / height ;
     }
 
  protected:

@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-Matrix rotate(double x, double y, double z, double angle) {
+Matrix rotated(double x, double y, double z, double angle) {
     //TODO : optimize this function
     Matrix I = Matrix::Id(3) ;
     Matrix J(3,3) ;
@@ -23,7 +23,7 @@ Matrix rotate(double x, double y, double z, double angle) {
     return (I + J*sin(angle) + (J*J * (1.0 - cos(angle)))).homogenized() ;
 }
 
-Matrix translate(double x, double y, double z) {
+Matrix translated(double x, double y, double z) {
     Matrix res = Matrix::Id() ;
 
     res(0,3) = x ;
@@ -33,7 +33,7 @@ Matrix translate(double x, double y, double z) {
     return res ;
 }
 
-Matrix scale(double x, double y, double z) {
+Matrix scaled(double x, double y, double z) {
     Matrix res = Matrix::Id() ;
     
     res(0,0) = x ;
@@ -47,7 +47,7 @@ double solve_quadratic_min(double a, double b, double c) {
 
     double discriminant, t1, t2, min ;
 
-    discriminant = b*b - 4*a*c ;
+    discriminant = b*b - a*c ;
 
     if (discriminant < 0.0) {
         return -1.0 ;

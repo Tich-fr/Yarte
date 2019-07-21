@@ -12,6 +12,10 @@ class Object {
     virtual double intersection(const Matrix& e, const Matrix& d) const = 0 ;
     virtual Matrix normal(const Matrix& intersection) const = 0 ;
 
+    Object& rotate(double x, double y, double z, double angle) ;
+    Object& translate(double x, double y, double z) ;
+    Object& scale(double x, double y, double z) ;
+
     // TODO encapsulate all of that as protected and do getters/setters
     Matrix M, Minv ;
     Color specular, diffuse, ambiant ;

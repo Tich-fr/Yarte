@@ -33,7 +33,7 @@ class Raytracer {
     Camera* cam ;
     Color background ;
     std::vector<Object*> objects ;
-    double Near, Far, Theta ;
+    double Near, Far, Theta, W, H ;
 };
     
 
