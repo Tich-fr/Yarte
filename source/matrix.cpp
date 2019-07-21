@@ -64,9 +64,9 @@ double Matrix::determinant() const {
     Matrix* m;
 
     if (line < 1 || col < 1) {
-        throw "Matrix::determinant : erroneous matrix size" ;
+        throw std::domain_error("Matrix::determinant : erroneous matrix size") ;
     } else if (line != col) {
-        throw "Matrix::determinant : not a square matrix" ;
+        throw std::domain_error("Matrix::determinant : not a square matrix") ;
     } else if (line == 1) { 
         det = get(0,0) ;
     } else if (line == 2) {
@@ -104,8 +104,7 @@ double Matrix::norm() const {
         return sqrt(s);
     } //else
     
-    throw "Matrix::norm : erroneous matrix size" ;
-    return -1;
+    throw std::domain_error("Matrix::norm : erroneous matrix size") ;
 }
 
 void Matrix::inverse() {
@@ -214,7 +213,7 @@ Matrix Matrix::unhomogenized() const {
 
 Matrix Matrix::operator+ (const Matrix& b) const {
     if (line != b.line || col != b.col) {
-        throw "Matrix::ope+ : erroneous matrix size" ;
+        throw std::domain_error("Matrix::ope+ : erroneous matrix size") ;
     }
     Matrix res(line, col);
     for (int i = 0; i < line; i++) {
@@ -226,7 +225,7 @@ Matrix Matrix::operator+ (const Matrix& b) const {
 
 Matrix Matrix::operator- (const Matrix& b) const {
     if (line != b.line || col != b.col) {
-        throw "Matrix::ope- : erroneous matrix size" ;
+        throw std::domain_error("Matrix::ope- : erroneous matrix size") ;
     }
     Matrix res(line, col);
     for (int i = 0; i < line; i++) {
@@ -257,7 +256,7 @@ Matrix Matrix::operator* (const double d) const {
 
 Matrix Matrix::operator* (const Matrix& b) const {
     if (col != b.line) {
-        throw "Matrix::ope* : erroneous matrix size" ;
+        throw std::domain_error("Matrix::ope* : erroneous matrix size") ;
     }
 
     double s;
@@ -278,11 +277,11 @@ Matrix Matrix::operator* (const Matrix& b) const {
 
 Matrix Matrix::cross(const Matrix& b) const {
     if ((line != 1 && col != 1) || (b.line != 1 && b.col != 1))
-        throw "Matrix::cross : erroneous matrix size" ;
+        throw std::domain_error("Matrix::cross : erroneous matrix size") ;
     if (line != 3) 
-        throw "Matrix::cross : erroneous matrix size" ;
+        throw std::domain_error("Matrix::cross : erroneous matrix size") ;
     if (b.line != 3)
-        throw "Matrix::cross : erroneous matrix size" ;
+        throw std::domain_error("Matrix::cross : erroneous matrix size") ;
 
     Matrix res(1, 3);
     Matrix c(1, 3);
@@ -315,7 +314,7 @@ double Matrix::dot(const Matrix& b) const {
     else if (line == b.line && col == 1 && b.col == 1)
         res = this->transposed() * b;
     else
-        throw "Matrix::dot : Incompatible matrix sizes" ;
+        throw std::domain_error("Matrix::dot : Incompatible matrix sizes") ;
 
     return res(0,0);
 }
@@ -336,19 +335,19 @@ Matrix& Matrix::operator= (const Matrix& m) {
 
 double Matrix::operator() (int l, int c) const {
     if (l < 0 || l >= line || c < 0 || c >= col)
-        throw "Matrix::ope() : Index out of range" ;
+        throw std::out_of_range("Matrix::ope() : Index out of range") ;
     return mat[l * col + c];
 }
 
 double& Matrix::operator() (int l, int c) {
     if (l < 0 || l >= line || c < 0 || c >= col)
-        throw "Matrix::ope() : Index out of range" ;
+        throw std::out_of_range("Matrix::ope() : Index out of range") ;
     return mat[l * col + c];
 }
 
 double Matrix::get(int l, int c) const {
     if (l < 0 || l >= line || c < 0 || c >= col)
-        throw "Matrix::get : Index out of range" ;
+        throw std::out_of_range("Matrix::get : Index out of range") ;
     return mat[l * col + c];
 }
 

@@ -10,11 +10,11 @@
 
 #include <vector>
 
-#define MAX_OBJ 8
+constexpr int MAX_OBJ = 8 ;
 
 class Raytracer {
  public:
-    Raytracer(Environment* env) ;
+    explicit Raytracer(Environment* env) ;
     ~Raytracer() ;
 
     void show() ;
@@ -33,7 +33,7 @@ class Raytracer {
     Camera* cam ;
     Color background ;
     std::vector<Object*> objects ;
-    double Near, Far, Theta, W, H ;
+    double Near, Theta, W, H ;
 };
     
 

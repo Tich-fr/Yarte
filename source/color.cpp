@@ -4,6 +4,8 @@ Color::Color(unsigned int r, unsigned int g, unsigned int b) : r(r), g(g), b(b) 
 
 Color::Color(const Color& c) : r(c.r), g(c.g), b(c.b) {}
 
+Color::~Color() {}
+
 Color Color::operator+ (const Color& c) {
 
     Color res(r + c.r, g + c.g, b + c.b) ;
@@ -22,9 +24,11 @@ Color Color::operator* (const float& f) {
 
 Color& Color::operator= (const Color& c) {
 
-    r = c.r ;
-    g = c.g ;
-    b = c.b ;
+    if (this != &c) {
+        r = c.r ;
+        g = c.g ;
+        b = c.b ;
+    }
 
     return *this;
 }

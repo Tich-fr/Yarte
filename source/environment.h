@@ -27,7 +27,7 @@ class Environment {
         return (float)width / height ;
     }
 
- protected:
+ private:
     uint width, height ;
 };
 

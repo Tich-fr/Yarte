@@ -5,6 +5,7 @@ class Color {
     public:
         Color(unsigned int r=0, unsigned int g=0, unsigned int b=0);
         Color(const Color& c) ;
+        ~Color() ;
 
         Color operator+ (const Color& c);
         Color operator- (const Color& c);

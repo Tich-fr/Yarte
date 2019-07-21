@@ -3,7 +3,7 @@
 
 #include "matrix.h"
 
-#define EPSILON 0.001
+constexpr double EPSILON = 0.001 ;
 
 Matrix rotated(double x, double y, double z, double angle) ;
 

@@ -9,7 +9,7 @@
 //TODO : make values for light and background configurable
 Raytracer::Raytracer(Environment* env) :
     env(env), light(new Light(Matrix(4,1), Color(80, 80, 10), Color(1, 1, 1))),
-    cam(new Camera()), background(125, 125, 125), Near(1.0), Far(25.0), Theta(45.0) {
+    cam(new Camera()), background(125, 125, 125), Near(1.0), Theta(45.0) {
 
     H = Near * tan(M_PI/180 * Theta/2) ;
     W = H * env->get_ratio() ;
@@ -49,7 +49,6 @@ void Raytracer::render() {
     Color c ;
     int h = env->get_height() ;
     int w = env->get_width() ;
-    int jp ; // is turning upside-down the final rendering
 
     for (int i = 0; i < w ; i++) {
         for (int j = 0, jp = h-1 ; j < h ; j++, jp--) {
@@ -101,8 +100,8 @@ Color Raytracer::shade(int i, int j) {
     // find all intersections
     const int nobj = objects.size() ;
     double intersect[nobj] ;
-    for (int i=0 ; i<nobj ; i++) {
-        intersect[i] = objects[i]->intersection(e, d) ;
+    for (int k=0 ; k<nobj ; k++) {
+        intersect[k] = objects[k]->intersection(e, d) ;
     }
 
     // get closest intersection points

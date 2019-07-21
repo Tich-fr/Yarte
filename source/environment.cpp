@@ -1,13 +1,15 @@
 #include "environment.h"
 
-XEnvironment::XEnvironment(uint width, uint height) : Environment::Environment(width, height) {}
+#include <exception>
+
+XEnvironment::XEnvironment(uint w, uint h) : Environment::Environment(w, h) {}
 
 XEnvironment::~XEnvironment()  {}
 
 void XEnvironment::init() {
     display = XOpenDisplay(NULL) ;
-    if (display == NULL)
-        throw "Unable to contact X11 server." ;
+    if (display == NULL) {
+        throw std::runtime_error("Unable to contact X11 server.") ;
 
     int posx = 10 ;
     int posy = 10 ;
@@ -15,7 +17,7 @@ void XEnvironment::init() {
     screen = DefaultScreen(display) ;
     gc = DefaultGC(display, screen) ;
     window = XCreateSimpleWindow(display, RootWindow(display, screen),
-                                 posx, posy, width, height, 1,
+                                 posx, posy, get_width(), get_height(), 1,
                                  BlackPixel(display, screen),
                                  WhitePixel(display, screen)) ;
 
@@ -25,7 +27,7 @@ void XEnvironment::init() {
     
     XMapWindow(display, window) ;
 
-    XStoreName(display, window, "Yet Another RayTracer Engine") ;
+    XStoreName(display, window, "Yet Another RayTracing Engine") ;
 
     while(true) {
         XNextEvent(display, &event) ;
