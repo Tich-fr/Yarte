@@ -1,6 +1,6 @@
 #include "environment.h"
 
-#include <exception>
+#include <stdexcept>
 
 XEnvironment::XEnvironment(uint w, uint h) : Environment::Environment(w, h) {}
 
@@ -8,7 +8,7 @@ XEnvironment::~XEnvironment()  {}
 
 void XEnvironment::init() {
     display = XOpenDisplay(NULL) ;
-    if (display == NULL) {
+    if (display == NULL) 
         throw std::runtime_error("Unable to contact X11 server.") ;
 
     int posx = 10 ;
