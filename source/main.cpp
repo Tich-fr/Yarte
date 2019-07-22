@@ -9,25 +9,20 @@ int main(int argc, char* argv[]) {
 
     Raytracer* rt = new Raytracer(new XEnvironment(512*1.6, 512)) ;
 
-    Object* o1 = new IPlane(Color(200, 10, 10), 0.8,
+    Object* o1 = new IPlane(Color(255, 60, 60), 0.8,
                             Color(190, 20, 20), 0.4,
-                            Color(100, 30, 30), 0.2,
+                            Color(173, 42, 42), 0.2,
                             0.35, 1.0) ;
-    Object* o2 = new Sphere(Color(20, 200, 20), 0.8,
+    Object* o2 = new Sphere(Color(60, 255, 60), 0.8,
                             Color(30, 190, 30), 0.4,
-                            Color(40, 100, 40), 0.2,
-                            0.35, 1.0) ;
-    Object* o3 = new Cone(Color(20, 200, 200), 0.8,
-                            Color(30, 190, 190), 0.4,
-                            Color(40, 100, 100), 0.2,
+                            Color(42, 173, 42), 0.2,
                             0.35, 1.0) ;
 
-    o2->translate(2, 2, 2) ;
-    o3->translate(-2, 2, 2) ;
+    o1->translate( 0, 0, -1) ;
+    o2->translate( 0, 0,  1) ;
 
     rt->add_object(o1) ;
     rt->add_object(o2) ;
-    rt->add_object(o3) ;
 
     rt->show() ;
 

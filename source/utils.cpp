@@ -43,6 +43,10 @@ Matrix scaled(double x, double y, double z) {
     return res ;
 }
 
+/*
+ * be careful : this function was designed to be use only with Object::intersections()
+ * functions. This is not a classic quadratic resolution.
+ */
 double solve_quadratic_min(double a, double b, double c) {
 
     double discriminant, t1, t2, min ;
@@ -57,9 +61,19 @@ double solve_quadratic_min(double a, double b, double c) {
         t1 = (-b - sqrtl(discriminant)) / a ;
         t2 = (-b + sqrtl(discriminant)) / a ;
 
-        min = t1<t2 ? t1 : t2 ;
+        if (t1 > EPSILON) {
+            if (t2 > EPSILON)
+                min = t1 < t2 ? t1 : t2 ;
+            else
+                min = t1 ;
+        } else {
+            if (t2 > EPSILON)
+                min = t2 ;
+            else
+                min = -1.0 ;
+        }
 
-        return min>EPSILON ? min : -1.0 ;
+        return min ;
     }
 }
 
@@ -76,9 +90,9 @@ Matrix coordinate_on_segment(const Matrix& e, const Matrix& d, double t) {
     Matrix res(4,1) ;
 
     res(0,0) = e(0,0) + d(0,0) * t ;
-    res(0,0) = e(1,0) + d(1,0) * t ;
-    res(0,0) = e(2,0) + d(2,0) * t ;
-    res(0,0) = 1.0 ;
+    res(1,0) = e(1,0) + d(1,0) * t ;
+    res(2,0) = e(2,0) + d(2,0) * t ;
+    res(3,0) = 1.0 ;
 
     return res;
 }

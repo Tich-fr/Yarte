@@ -7,14 +7,14 @@
 //TODO : make values for light and background configurable
 Raytracer::Raytracer(Environment* env) :
     env(env), light(new Light(Matrix(4,1), Color(80, 80, 10), Color(1, 1, 1))),
-    cam(new Camera()), background(125, 125, 125), Near(1.0), Theta(45.0) {
+    cam(new Camera()), background(0, 0, 0), Near(1.0), Theta(45.0) {
 
     H = Near * tan(M_PI/180 * Theta/2) ;
     W = H * env->get_ratio() ;
 
-    light->pos(0,0) = 6.0 ;
-    light->pos(1,0) = 6.0 ;
-    light->pos(2,0) = 1.0 ;
+    light->pos(0,0) = 8.0 ;
+    light->pos(1,0) = 5.0 ;
+    light->pos(2,0) = 5.0 ;
     light->pos(3,0) = 1.0 ;
 
     env->init() ;
@@ -79,14 +79,15 @@ Matrix Raytracer::ray_direction(int i, int j) {
             + H*(2.0*j/env->get_height() - 1.0)*cam->v(k,0) ;
     d(3,0) = 0.0 ;
 
-    return d ;
+    return d.normalized() ;
 }
 
 bool Raytracer::shadowed(const Matrix& e, const Matrix& d) {
 
+    Matrix e_shifted = e + (d * EPSILON) ; // prevent shadowing acne
     const int nobj = objects.size() ;
     for (int i=0 ; i<nobj ; i++)
-        if (objects[i]->intersection(e, d) < 0)
+        if (objects[i]->intersection(e_shifted, d) > 0)
             return true ;
     
     return false ;
@@ -100,13 +101,13 @@ Color Raytracer::shade(int i, int j) {
     // find closest intersections
     double intersection = DBL_MAX ;
     double tmp ;
-    int ind ;
+    Object* nearest ;
     const int nobj = objects.size() ;
     for (int k=0 ; k<nobj ; k++) {
         tmp = objects[k]->intersection(e, d) ;
         if (tmp >= 0.0 && tmp < intersection) {
             intersection = tmp ;
-            ind = k ;
+            nearest = objects[k] ;
         }
     }
 
@@ -114,14 +115,15 @@ Color Raytracer::shade(int i, int j) {
     if (intersection == DBL_MAX)
         return background ;
 
-    // shadowed or not ?
-    // TODO : does not work, everything is in shadow
     Matrix pos_intersection = coordinate_on_segment(e, d, intersection) ;
+
+    // shadowed or not ?
+    // TODO : does not work, nothing is in shadow
     if (shadowed(pos_intersection, vector_a_to_b(pos_intersection, light->pos)))
-        return objects[ind]->ambiant ;
+        return nearest->ambiant ;
     
     // for now just return the color of the closest object
-    return objects[ind]->specular ;
+    return nearest->specular ;
 
     //TODO opacity
     //TODO reflectivity

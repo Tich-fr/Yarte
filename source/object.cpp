@@ -141,7 +141,29 @@ double Cone::intersection( const Matrix &pos, const Matrix &dir ) const {
     double t = solve_quadratic_min(a, b, c) ;
     double z = e(2,0) + d(2,0)*t ;
 
-    return (z<=1 && z>=-1) ? t : -1.0 ;
+    //return (z<=1 && z>=-1) ? t : -1.0 ;
+    if (z<=1 && z>=-1)
+        return t ;
+
+    // Disk bottom plane intersection
+    if (fabs(d(2,0) + 1.0) < EPSILON)
+        return -1.0 ;
+
+    t = -(e(2,0)+1) / d(2,0) ;
+    if (t <= 0.0)
+        return -1.0 ;
+    
+    Matrix i = coordinate_on_segment(e, d, t) ;
+    Matrix center_plane(4,1) ;
+    center_plane(0,0) = 0.0 ;
+    center_plane(1,0) = 0.0 ;
+    center_plane(2,0) = -1.0 ;
+    center_plane(3,0) = 1.0 ;
+
+    Matrix v = i - center_plane ;
+    double d2 = v.dot(v) ;
+
+    return sqrt(d2) <= 1 ? t : -1.0 ;
 }
 
 Matrix Cone::normal( const Matrix &intersection ) const {

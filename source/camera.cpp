@@ -2,12 +2,12 @@
 
 // pos
 constexpr double Ex = 10.0 ;
-constexpr double Ey = 10.0 ;
-constexpr double Ez = 5.0 ;
+constexpr double Ey = -5.0 ;
+constexpr double Ez =  2.5 ;
 
 // gaze
-constexpr double Gx = -2.0 ;
-constexpr double Gy = -2.0 ;
+constexpr double Gx = 0.0 ;
+constexpr double Gy = 0.0 ;
 constexpr double Gz = -1.0 ;
 
 // up
