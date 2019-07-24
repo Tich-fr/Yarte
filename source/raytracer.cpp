@@ -49,28 +49,13 @@ void Raytracer::render() {
 
     for (int i = 0; i < w ; i++) {
         for (int j = 0 ; j < h ; j++) {
-            c = shade(i, j) ;
-            env->setPixel(i, j, c.r, c.g, c.b) ;
+            c = shade(ray_at_pixel(i, j)) ;
+            env->setPixel(i, j, c.red(), c.green(), c.blue()) ;
         }
     }
 }
 
-int Raytracer::find_min_hit_time(double intersect[], int size) {
-
-    double min_t = DBL_MAX ;
-    int ind = -1 ;
-
-    for (int i=0 ; i<size ; i++) {
-        if (intersect[i] != -1.0 && intersect[i] < min_t) {
-            min_t = intersect[i] ;
-            ind = i ;
-        }
-    }
-
-    return ind ;
-}
-
-Matrix Raytracer::ray_direction(int i, int j) {
+Ray Raytracer::ray_at_pixel(int i, int j) {
 
     Matrix d(4,1) ;
 
@@ -79,52 +64,59 @@ Matrix Raytracer::ray_direction(int i, int j) {
             + H*(2.0*j/env->get_height() - 1.0)*cam->v(k,0) ;
     d(3,0) = 0.0 ;
 
-    return d.normalized() ;
+    return Ray(cam->pos, d.normalized()) ;
 }
 
-bool Raytracer::shadowed(const Matrix& e, const Matrix& d) {
+bool Raytracer::shadowed(const Matrix& pos) {
 
-    Matrix e_shifted = e + (d * EPSILON) ; // prevent shadowing acne
+    Ray pos_to_light(pos, vector_a_to_b(pos, light->pos)) ;
+
+    // prevent shadowing acne
+    pos_to_light.shift(EPSILON) ;
+    
     const int nobj = objects.size() ;
     for (int i=0 ; i<nobj ; i++)
-        if (objects[i]->intersection(e_shifted, d) > 0)
+        if (objects[i]->intersect(pos_to_light) > 0)
             return true ;
     
     return false ;
 }
 
-Color Raytracer::shade(int i, int j) {
+double Raytracer::closest_intersection(const Ray& r, Object **o) {
 
-    Matrix e = cam->pos ;
-    Matrix d = ray_direction(i, j) ;
-
-    // find closest intersections
     double intersection = DBL_MAX ;
     double tmp ;
-    Object* nearest ;
+    *o = nullptr ;
     const int nobj = objects.size() ;
     for (int k=0 ; k<nobj ; k++) {
-        tmp = objects[k]->intersection(e, d) ;
+        tmp = objects[k]->intersect(r) ;
         if (tmp >= 0.0 && tmp < intersection) {
             intersection = tmp ;
-            nearest = objects[k] ;
+            *o = objects[k] ;
         }
     }
 
     // no intersection ?
     if (intersection == DBL_MAX)
+        return -1.0 ;
+
+    return intersection ;
+}
+
+//TODO opacity : everything here is considered 100% opaq
+//TODO reflectivity -> recursivity
+Color Raytracer::shade(const Ray& ray) {
+
+    Object* nearest ;
+    double t = closest_intersection(ray, &nearest) ;
+
+    if (t < 0.0 || nearest == nullptr)
         return background ;
 
-    Matrix pos_intersection = coordinate_on_segment(e, d, intersection) ;
+    Matrix intersection = ray.position_at(t) ;
 
-    // shadowed or not ?
-    // TODO : does not work, nothing is in shadow
-    if (shadowed(pos_intersection, vector_a_to_b(pos_intersection, light->pos)))
+    if (shadowed(intersection))
         return nearest->ambiant ;
     
-    // for now just return the color of the closest object
     return nearest->specular ;
-
-    //TODO opacity
-    //TODO reflectivity
 }

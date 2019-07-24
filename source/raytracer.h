@@ -7,10 +7,9 @@
 #include "matrix.h"
 #include "camera.h"
 #include "color.h"
+#include "ray.h"
 
 #include <vector>
-
-constexpr int MAX_OBJ = 8 ;
 
 class Raytracer {
  public:
@@ -23,10 +22,10 @@ class Raytracer {
 
  private:
     void render() ;
-    int find_min_hit_time(double intersect[], int size) ;
-    Matrix ray_direction(int i, int j) ;
-    bool shadowed(const Matrix& e, const Matrix& d) ;
-    Color shade(int i, int j) ;
+    Ray ray_at_pixel(int i, int j) ;
+    bool shadowed(const Matrix& pos) ;
+    double closest_intersection(const Ray& r, Object **o) ;
+    Color shade(const Ray& ray) ;
     
     Environment* env ;
     Light* light ;

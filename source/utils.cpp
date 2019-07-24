@@ -84,15 +84,3 @@ Matrix vector_a_to_b(const Matrix& a, const Matrix& b) {
 Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s) {
     return ((s * -1.0) + (n * 2 * n.dot(s))).normalized() ;
 }
-
-Matrix coordinate_on_segment(const Matrix& e, const Matrix& d, double t) {
-
-    Matrix res(4,1) ;
-
-    res(0,0) = e(0,0) + d(0,0) * t ;
-    res(1,0) = e(1,0) + d(1,0) * t ;
-    res(2,0) = e(2,0) + d(2,0) * t ;
-    res(3,0) = 1.0 ;
-
-    return res;
-}

@@ -3,13 +3,14 @@
 
 #include "matrix.h"
 #include "color.h"
+#include "ray.h"
 
 class Object {
  public:
     Object(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
     virtual ~Object() ;
 
-    virtual double intersection(const Matrix& e, const Matrix& d) const = 0 ;
+    virtual double intersect(const Ray& r) const = 0 ;
     virtual Matrix normal(const Matrix& intersection) const = 0 ;
 
     Object& rotate(double x, double y, double z, double angle) ;
@@ -27,7 +28,7 @@ class IPlane : public Object {
  public:
     IPlane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
 
-    double intersection(const Matrix& e, const Matrix& d) const ;
+    double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;
 };
 
@@ -35,7 +36,7 @@ class Plane : public Object {
  public:
     Plane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
 
-    double intersection(const Matrix& e, const Matrix& d) const ;
+    double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;
 };
 
@@ -43,15 +44,7 @@ class Sphere : public Object {
  public:
     Sphere(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
 
-    double intersection(const Matrix& e, const Matrix& d) const ;
-    Matrix normal(const Matrix& intersection) const ;
-};
-
-class Cone : public Object {
- public:
-    Cone(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
-
-    double intersection(const Matrix& e, const Matrix& d) const ;
+    double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;
 };
 

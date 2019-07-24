@@ -20,6 +20,4 @@ Matrix vector_a_to_b(const Matrix& a, const Matrix& b) ;
 
 Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s) ;
 
-Matrix coordinate_on_segment(const Matrix& e, const Matrix& d, double t) ;
-
 #endif // UTILS_H
