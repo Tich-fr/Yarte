@@ -118,5 +118,5 @@ Color Raytracer::shade(const Ray& ray) {
     if (shadowed(intersection))
         return nearest->ambiant ;
     
-    return nearest->specular ;
+    return nearest->diffuse ;
 }

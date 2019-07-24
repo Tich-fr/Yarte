@@ -3,14 +3,14 @@
 
 class Color {
 public:
-    Color(unsigned int rd=0, unsigned int gr=0, unsigned int bl=0);
+    explicit Color(int rd=0, int gr=0, int bl=0) ;
+    explicit Color(double rd, double gr, double bl) ;
     Color(const Color& c) ;
     ~Color() ;
 
-    Color operator+ (const Color& c);
-    Color operator- (const Color& c);
-    Color operator* (const float& value);
-    Color& operator= (const Color& c);
+    Color operator+ (const Color& c) const ;
+    Color operator* (double value) const ;
+    Color& operator= (const Color& c) ;
 
     unsigned int red() const ;
     unsigned int green() const ;

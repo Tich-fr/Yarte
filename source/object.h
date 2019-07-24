@@ -7,7 +7,7 @@
 
 class Object {
  public:
-    Object(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
+    Object(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) ;
     virtual ~Object() ;
 
     virtual double intersect(const Ray& r) const = 0 ;
@@ -21,12 +21,12 @@ class Object {
     Matrix M, Minv ;
     Color specular, diffuse, ambiant ;
     double specular_coeff, diffuse_coeff, ambiant_coeff ;
-    double density, reflectivity, f ;
+    double density, reflectivity ;
 };
 
 class IPlane : public Object {
  public:
-    IPlane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
+    IPlane(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) ;
 
     double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;
@@ -34,7 +34,7 @@ class IPlane : public Object {
 
 class Plane : public Object {
  public:
-    Plane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
+    Plane(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) ;
 
     double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;
@@ -42,7 +42,7 @@ class Plane : public Object {
 
 class Sphere : public Object {
  public:
-    Sphere(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) ;
+    Sphere(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) ;
 
     double intersect(const Ray& r) const ;
     Matrix normal(const Matrix& intersection) const ;

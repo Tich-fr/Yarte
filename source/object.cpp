@@ -1,11 +1,12 @@
 #include "object.h"
 #include "utils.h" // define EPSILON, <cmath>, ..
 
-Object::Object(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f) :
-    M(Matrix::Id()), Minv(Matrix::Id()), specular(spec), diffuse(diff), ambiant(amb),
+Object::Object(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) :
+    M(Matrix::Id()), Minv(Matrix::Id()),
+    specular(col * spec_c), diffuse(col * diff_c), ambiant(col * amb_c),
     specular_coeff(spec_c), diffuse_coeff(diff_c), ambiant_coeff(amb_c),
-    density(1.0), reflectivity(reflect), f(f) {
-}
+    density(1.0), reflectivity(reflect)
+{}
 
 Object::~Object() {}
 
@@ -35,8 +36,8 @@ Object& Object::scale(double x, double y, double z) {
 
 // Infinite plane
 
-IPlane::IPlane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
-    : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
+IPlane::IPlane(const Color& col, double spec_c, double diff_c, double amb_c, double reflect)
+    : Object(col, spec_c, diff_c, amb_c, reflect) {}
 
 double IPlane::intersect(const Ray& ray) const {
 
@@ -64,8 +65,8 @@ Matrix IPlane::normal(const Matrix& intersection) const {
 
 // Plane
 
-Plane::Plane(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
-    : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
+Plane::Plane(const Color& col, double spec_c, double diff_c, double amb_c, double reflect)
+    : Object(col, spec_c, diff_c, amb_c, reflect) {}
 
 double Plane::intersect(const Ray& ray) const {
 
@@ -96,8 +97,13 @@ Matrix Plane::normal(const Matrix& intersection) const {
 
 // Sphere
 
-Sphere::Sphere(const Color& spec, double spec_c, const Color& diff, double diff_c, const Color& amb, double amb_c, double reflect, double f)
-    : Object(spec, spec_c, diff, diff_c, amb, amb_c, reflect, f) {}
+Sphere::Sphere(const Color& col, double spec_c, double diff_c, double amb_c, double reflect)
+    : Object(col, spec_c, diff_c, amb_c, reflect) {
+
+    std::cerr << "spec : [" << specular.red() << "," << specular.green() << "," << specular.blue() << std::endl ;
+    std::cerr << "diff : [" << diffuse.red() << "," << diffuse.green() << "," << diffuse.blue() << std::endl ;
+    std::cerr << "amb : [" << ambiant.red() << "," << ambiant.green() << "," << ambiant.blue() << std::endl ;
+}
 
 double Sphere::intersect(const Ray& ray) const {
 
