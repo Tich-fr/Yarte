@@ -3,7 +3,7 @@
 
 Object::Object(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) :
     M(Matrix::Id()), Minv(Matrix::Id()),
-    specular(col * spec_c), diffuse(col * diff_c), ambiant(col * amb_c),
+    color(col), specular(col * spec_c), diffuse(col * diff_c), ambiant(col * amb_c),
     specular_coeff(spec_c), diffuse_coeff(diff_c), ambiant_coeff(amb_c),
     density(1.0), reflectivity(reflect)
 {}
@@ -98,12 +98,7 @@ Matrix Plane::normal(const Matrix& intersection) const {
 // Sphere
 
 Sphere::Sphere(const Color& col, double spec_c, double diff_c, double amb_c, double reflect)
-    : Object(col, spec_c, diff_c, amb_c, reflect) {
-
-    std::cerr << "spec : [" << specular.red() << "," << specular.green() << "," << specular.blue() << std::endl ;
-    std::cerr << "diff : [" << diffuse.red() << "," << diffuse.green() << "," << diffuse.blue() << std::endl ;
-    std::cerr << "amb : [" << ambiant.red() << "," << ambiant.green() << "," << ambiant.blue() << std::endl ;
-}
+    : Object(col, spec_c, diff_c, amb_c, reflect) {}
 
 double Sphere::intersect(const Ray& ray) const {
 

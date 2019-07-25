@@ -6,13 +6,13 @@
 
 //TODO : make values for light and background configurable
 Raytracer::Raytracer(Environment* env) :
-    env(env), light(new Light(Matrix(4,1), Color(80, 80, 10), Color(1, 1, 1))),
+    env(env), light(new Light(Matrix(4,1), Color(1.0, 1.0, 1.0), Color(0.2, 0.2, 0.2))),
     cam(new Camera()), background(0, 0, 0), Near(1.0), Theta(45.0) {
 
     H = Near * tan(M_PI/180 * Theta/2) ;
     W = H * env->get_ratio() ;
 
-    light->pos(0,0) = 8.0 ;
+    light->pos(0,0) = 6.0 ;
     light->pos(1,0) = 5.0 ;
     light->pos(2,0) = 5.0 ;
     light->pos(3,0) = 1.0 ;
@@ -103,20 +103,40 @@ double Raytracer::closest_intersection(const Ray& r, Object **o) {
     return intersection ;
 }
 
-//TODO opacity : everything here is considered 100% opaq
-//TODO reflectivity -> recursivity
+//TODO opacity, reflectivity, atmoshpere (effect of the distance on the light)
 Color Raytracer::shade(const Ray& ray) {
 
     Object* nearest ;
     double t = closest_intersection(ray, &nearest) ;
-
+    
     if (t < 0.0 || nearest == nullptr)
         return background ;
-
-    Matrix intersection = ray.position_at(t) ;
-
-    if (shadowed(intersection))
-        return nearest->ambiant ;
     
-    return nearest->diffuse ;
+    Matrix intersection = ray.position_at(t) ;
+    
+    if (shadowed(intersection))
+        return nearest->color * light->ambiant ;
+    
+    Matrix to_light = vector_a_to_b(intersection, light->pos).homogenized() ;
+    Matrix to_camera = vector_a_to_b(intersection, cam->pos).homogenized() ;
+    Matrix normal = nearest->normal(intersection).homogenized() ;
+    Matrix reflected = vector_to_specular_reflection(normal, to_light) ;
+
+    Color intensity ;
+
+    // diffuse
+    double diffuse_coef = normal.dot(to_light) ;
+    if (diffuse_coef > 0.0) {
+        diffuse_coef /= (normal.norm() * to_light.norm()) ;
+        intensity = intensity + light->intensity*diffuse_coef ;
+    }
+
+    // specular
+    double spec_coef = reflected.dot(to_camera) ;
+    if (nearest->reflectivity > 0.0 && spec_coef > 0.0 ) {
+        spec_coef = pow(spec_coef/(reflected.norm() * to_camera.norm()), nearest->reflectivity) ;
+        intensity = intensity +light->intensity*spec_coef ;
+    }
+
+    return nearest->color * intensity ;
 }

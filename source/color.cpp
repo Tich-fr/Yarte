@@ -12,18 +12,17 @@ Color::~Color() {}
 
 Color Color::operator+ (const Color& c) const {
 
-    Color res(r + c.r, g + c.g, b + c.b) ;
-    res.limit_sup() ;
-
-    return res ;
+    return Color(r + c.r, g + c.g, b + c.b) ;
 }
 
 Color Color::operator* (double f) const {
 
-    Color res(r*f, g*f, b*f) ;
-    res.limit_sup() ;
+    return Color(r*f, g*f, b*f) ;
+}
 
-    return res ;
+Color Color::operator* (const Color& c) const {
+        
+    return Color(r*c.r, g*c.g, b*c.b) ;
 }
 
 Color& Color::operator= (const Color& c) {
@@ -38,21 +37,20 @@ Color& Color::operator= (const Color& c) {
 }
 
 unsigned int Color::red() const {
-    return r * 255 ;
+    return r > 1.0 ? 255 : r * 255 ;
 }
 
 
 unsigned int Color::green() const {
-    return g * 255 ;
+    return g > 1.0 ? 255 : g * 255 ;
 }
 
 unsigned int Color::blue() const {
-    return b * 255 ;
+    return b > 1.0 ? 255 : b * 255 ;
 }
 
-void Color::limit_sup() {
+std::ostream& operator<<(std::ostream& out, const Color& c) {
 
-    r = r>1.0 ? 1.0 : r;
-    g = g>1.0 ? 1.0 : g;
-    b = b>1.0 ? 1.0 : b;
+    out << "{ " << c.r << " " << c.g << " " << c.b << " }" ;
+    return out ;
 }

@@ -19,7 +19,7 @@ class Object {
 
     // TODO encapsulate all of that as protected and do getters/setters
     Matrix M, Minv ;
-    Color specular, diffuse, ambiant ;
+    Color color, specular, diffuse, ambiant ;
     double specular_coeff, diffuse_coeff, ambiant_coeff ;
     double density, reflectivity ;
 };

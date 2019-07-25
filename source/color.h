@@ -1,6 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include <iostream>
+
 class Color {
 public:
     explicit Color(int rd=0, int gr=0, int bl=0) ;
@@ -10,16 +12,17 @@ public:
 
     Color operator+ (const Color& c) const ;
     Color operator* (double value) const ;
+    Color operator* (const Color& c) const ;
     Color& operator= (const Color& c) ;
 
     unsigned int red() const ;
     unsigned int green() const ;
     unsigned int blue() const ;
 
+    friend std::ostream& operator<<(std::ostream& out, const Color& c) ;
+
 private:
     double r, g, b;
-
-    void limit_sup();
 };
 
 #endif // COLOR_H
