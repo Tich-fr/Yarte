@@ -13,7 +13,7 @@ Raytracer::Raytracer(Environment* env) :
     W = H * env->get_ratio() ;
 
     light->pos(0,0) = 6.0 ;
-    light->pos(1,0) = 5.0 ;
+    light->pos(1,0) = 1.0 ;
     light->pos(2,0) = 5.0 ;
     light->pos(3,0) = 1.0 ;
 
@@ -114,20 +114,22 @@ Color Raytracer::shade(const Ray& ray) {
     
     Matrix intersection = ray.position_at(t) ;
     
+    /*
     if (shadowed(intersection))
         return nearest->color * light->ambiant ;
+    */
     
-    Matrix to_light = vector_a_to_b(intersection, light->pos).homogenized() ;
-    Matrix to_camera = vector_a_to_b(intersection, cam->pos).homogenized() ;
+    Matrix to_light = vector_a_to_b(intersection, light->pos, false).homogenized() ;
+    Matrix to_camera = vector_a_to_b(intersection, cam->pos, false).homogenized() ;
     Matrix normal = nearest->normal(intersection).homogenized() ;
-    Matrix reflected = vector_to_specular_reflection(normal, to_light) ;
+    Matrix reflected = vector_to_specular_reflection(normal, to_light, false) ;
 
     Color intensity ;
 
     // diffuse
     double diffuse_coef = normal.dot(to_light) ;
     if (diffuse_coef > 0.0) {
-        diffuse_coef /= (normal.norm() * to_light.norm()) ;
+        diffuse_coef /= to_light.norm() ;
         intensity = intensity + light->intensity*diffuse_coef ;
     }
 

@@ -77,10 +77,16 @@ double solve_quadratic_min(double a, double b, double c) {
     }
 }
 
-Matrix vector_a_to_b(const Matrix& a, const Matrix& b) {
-    return (b - a).normalized() ;
+Matrix vector_a_to_b(const Matrix& a, const Matrix& b, bool normalized) {
+    if (normalized)
+        return (b - a).normalized() ;
+    else
+        return b - a ;
 }
 
-Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s) {
-    return ((s * -1.0) + (n * 2 * n.dot(s))).normalized() ;
+Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s, bool normalized) {
+    if (normalized)
+        return ((s * -1.0) + (n * 2 * n.dot(s))).normalized() ;
+    else
+        return (s * -1.0) + (n * 2 * n.dot(s)) ;
 }

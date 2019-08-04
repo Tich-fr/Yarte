@@ -60,7 +60,7 @@ Matrix IPlane::normal(const Matrix& intersection) const {
     normal(2,0) = 1.0 ;
     normal(3,0) = 0.0 ;
 
-    return normal.normalized() ;
+    return normal ;
 }
 
 // Plane
@@ -92,7 +92,7 @@ Matrix Plane::normal(const Matrix& intersection) const {
     normal(2,0) = 1.0 ;
     normal(3,0) = 0.0 ;
 
-    return normal.normalized() ;
+    return normal ;
 }
 
 // Sphere

@@ -16,8 +16,8 @@ Matrix scaled(double x, double y, double z) ;
  */
 double solve_quadratic_min(double a, double b, double c) ;
 
-Matrix vector_a_to_b(const Matrix& a, const Matrix& b) ;
+Matrix vector_a_to_b(const Matrix& a, const Matrix& b, bool normalized=true) ;
 
-Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s) ;
+Matrix vector_to_specular_reflection(const Matrix& n, const Matrix& s, bool normalized=true) ;
 
 #endif // UTILS_H
