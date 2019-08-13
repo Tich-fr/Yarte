@@ -1,14 +1,14 @@
 #include "camera.h"
 
 // pos
-constexpr double Ex = 10.0 ;
-constexpr double Ey = -5.0 ;
-constexpr double Ez =  2.5 ;
+constexpr double Ex = -1.0 ;
+constexpr double Ey = 0.0 ;
+constexpr double Ez = 2.0 ;
 
 // gaze
-constexpr double Gx = 0.0 ;
+constexpr double Gx = 1.0 ;
 constexpr double Gy = 0.0 ;
-constexpr double Gz = -1.0 ;
+constexpr double Gz = 1.6 ;
 
 // up
 constexpr double UPx = 0.0 ;

@@ -12,9 +12,9 @@ Raytracer::Raytracer(Environment* env) :
     H = Near * tan(M_PI/180 * Theta/2) ;
     W = H * env->get_ratio() ;
 
-    light->pos(0,0) = 6.0 ;
-    light->pos(1,0) = 1.0 ;
-    light->pos(2,0) = 5.0 ;
+    light->pos(0,0) = 2.0 ;
+    light->pos(1,0) = 3.0 ;
+    light->pos(2,0) = 4.0 ;
     light->pos(3,0) = 1.0 ;
 
     env->init() ;
@@ -49,7 +49,7 @@ void Raytracer::render() {
 
     for (int i = 0; i < w ; i++) {
         for (int j = 0 ; j < h ; j++) {
-            c = shade(ray_at_pixel(i, j)) ;
+            c = shade(ray_at_pixel(i, j), 1) ;
             env->setPixel(i, j, c.red(), c.green(), c.blue()) ;
         }
     }
@@ -103,8 +103,8 @@ double Raytracer::closest_intersection(const Ray& r, Object **o) {
     return intersection ;
 }
 
-//TODO opacity, reflectivity, atmoshpere (effect of the distance on the light)
-Color Raytracer::shade(const Ray& ray) {
+//TODO opacity, atmoshpere (effect of the distance on the light)
+Color Raytracer::shade(const Ray& ray, int level) {
 
     Object* nearest ;
     double t = closest_intersection(ray, &nearest) ;
@@ -113,18 +113,38 @@ Color Raytracer::shade(const Ray& ray) {
         return background ;
     
     Matrix intersection = ray.position_at(t) ;
-    
-    /*
-    if (shadowed(intersection))
-        return nearest->color * light->ambiant ;
-    */
-    
-    Matrix to_light = vector_a_to_b(intersection, light->pos, false).homogenized() ;
-    Matrix to_camera = vector_a_to_b(intersection, cam->pos, false).homogenized() ;
-    Matrix normal = nearest->normal(intersection).homogenized() ;
+    Matrix to_light = vector_a_to_b(intersection, light->pos, false).unhomogenized() ;
+    Matrix to_cam = vector_a_to_b(intersection, cam->pos, false).unhomogenized() ;
+    Matrix normal = nearest->normal(intersection).unhomogenized() ;
     Matrix reflected = vector_to_specular_reflection(normal, to_light, false) ;
+    
+    Color local = nearest->color * phong(intersection, to_light, to_cam,
+                                         normal, reflected, nearest) ;
 
+    if (level <= 0 || nearest->reflectivity < 0.0)
+        return local ;
+    
+    // Reflectivity
+    Ray next_ray = Ray(intersection,reflected.homogenized(1)) ;
+    next_ray.shift(EPSILON) ;
+    Color reflection = shade(next_ray, --level) ;
+
+    return local*(1-nearest->reflectivity) + reflection*nearest->reflectivity ;
+}
+
+Color Raytracer::phong(const Matrix& intersection, const Matrix& to_light, const Matrix& to_cam,
+                       const Matrix& normal, const Matrix& reflected, Object *nearest) {
+
+    // shadow
+    // sum if multiple ambiant lights
+    if(shadowed(intersection))
+        return light->ambiant ;
+    
     Color intensity ;
+
+    // ambiant
+    // sum if multiple ambiant lights
+    intensity = light->ambiant ;
 
     // diffuse
     double diffuse_coef = normal.dot(to_light) ;
@@ -134,11 +154,11 @@ Color Raytracer::shade(const Ray& ray) {
     }
 
     // specular
-    double spec_coef = reflected.dot(to_camera) ;
-    if (nearest->reflectivity > 0.0 && spec_coef > 0.0 ) {
-        spec_coef = pow(spec_coef/(reflected.norm() * to_camera.norm()), nearest->reflectivity) ;
+    double spec_coef = reflected.dot(to_cam) ;
+    if (spec_coef > 0.0 ) {
+        spec_coef = pow(spec_coef/(reflected.norm() * to_cam.norm()), 50) ;
         intensity = intensity +light->intensity*spec_coef ;
     }
 
-    return nearest->color * intensity ;
+    return intensity ;
 }

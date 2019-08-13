@@ -25,7 +25,9 @@ class Raytracer {
     Ray ray_at_pixel(int i, int j) ;
     bool shadowed(const Matrix& pos) ;
     double closest_intersection(const Ray& r, Object **o) ;
-    Color shade(const Ray& ray) ;
+    Color shade(const Ray& ray, int level = 0) ;
+    Color phong(const Matrix& intersection, const Matrix& to_light, const Matrix& to_cam,
+                const Matrix& normal, const Matrix& reflected, Object *nearest) ;
     
     Environment* env ;
     Light* light ;

@@ -19,9 +19,9 @@ class Object {
 
     // TODO encapsulate all of that as protected and do getters/setters
     Matrix M, Minv ;
-    Color color, specular, diffuse, ambiant ;
+    Color color ;
     double specular_coeff, diffuse_coeff, ambiant_coeff ;
-    double density, reflectivity ;
+    double reflectivity ;
 };
 
 class IPlane : public Object {

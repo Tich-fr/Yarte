@@ -2,10 +2,9 @@
 #include "utils.h" // define EPSILON, <cmath>, ..
 
 Object::Object(const Color& col, double spec_c, double diff_c, double amb_c, double reflect) :
-    M(Matrix::Id()), Minv(Matrix::Id()),
-    color(col), specular(col * spec_c), diffuse(col * diff_c), ambiant(col * amb_c),
+    M(Matrix::Id()), Minv(Matrix::Id()), color(col),
     specular_coeff(spec_c), diffuse_coeff(diff_c), ambiant_coeff(amb_c),
-    density(1.0), reflectivity(reflect)
+    reflectivity(reflect)
 {}
 
 Object::~Object() {}
@@ -114,12 +113,17 @@ double Sphere::intersect(const Ray& ray) const {
 
 Matrix Sphere::normal(const Matrix& intersection) const {
 
-    Matrix normal(4,1) ;
+    Matrix res(4,1) ;
+    Matrix center(3,1) ;
 
-    normal(0,0) = intersection(0,0) ;
-    normal(1,0) = intersection(1,0) ;
-    normal(2,0) = intersection(2,0) ;
-    normal(3,0) = 0.0 ;
+    center(0,0) = M(0,3) ;
+    center(1,0) = M(1,3) ;
+    center(2,0) = M(2,3) ;
 
-    return normal.normalized() ;
+    res(0,0) = intersection(0,0) - center(0,0) ;
+    res(1,0) = intersection(1,0) - center(1,0) ;
+    res(2,0) = intersection(2,0) - center(2,0) ;
+    res(3,0) = 0.0 ;
+
+    return res.normalized() ;
 }
